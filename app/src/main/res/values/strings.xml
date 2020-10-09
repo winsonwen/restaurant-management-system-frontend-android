@@ -1,0 +1,18 @@
+<resources>
+    <string name="app_name">Restaurant</string>
+    <string name="sign_in">Sign in</string>
+    <string name="sign_up">Sign up</string>
+    <string name="submit">Submit</string>
+    <string name="password">Password</string>
+    <string name="account">Account number</string>
+    <string name="signUp_username">username</string>
+    <string name="signUp_password">password</string>
+    <string name="signUp_firstname">fisrt name</string>
+    <string name="signUp_lastname">last name</string>
+    <string name="signUp_phone">phone number</string>
+    <string name="signUp_email">email</string>
+    <string name="Order">Order Information</string>
+    <string name="Tracking">Tracking Order</string>
+    <string name="Account">Account Information</string>
+    <string name="Logout">Log Out</string>
+</resources>
