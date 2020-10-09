@@ -161,7 +161,6 @@ public class MainActivity extends AppCompatActivity{
 
                     SharedPreferences sharedPreferences = getSharedPreferences(
                             "loginUser", Context.MODE_PRIVATE);
-                    //对数据进行编辑
                     SharedPreferences.Editor editor = sharedPreferences.edit();
                     editor.remove("loginUser");
                     editor.remove("loginUserTime");
