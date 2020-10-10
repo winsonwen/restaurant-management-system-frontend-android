@@ -23,7 +23,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-public class signUpActivity extends Activity {
+public class SignUpActivity extends Activity {
     RequestQueue requestqueue;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,7 +86,7 @@ public class signUpActivity extends Activity {
                 try {
                     if("0".equals(result.getString("code"))){
                         Toast.makeText(getApplicationContext(),"Sign up success", Toast.LENGTH_LONG).show();
-                        Intent intent = new Intent(signUpActivity.this, MainActivity.class);
+                        Intent intent = new Intent(SignUpActivity.this, MainActivity.class);
                         startActivity(intent);
 
                     }else {

@@ -11,11 +11,11 @@ import androidx.fragment.app.Fragment;
 
 import org.json.JSONObject;
 
-public class userFragment extends Fragment {
+public class UserFragment extends Fragment {
     private ListView view;
 
-    public static userFragment newInstance(JSONObject object){
-        userFragment fragment = new userFragment();
+    public static UserFragment newInstance(JSONObject object){
+        UserFragment fragment = new UserFragment();
         return null;
     }
 

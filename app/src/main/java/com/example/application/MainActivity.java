@@ -6,10 +6,7 @@ import androidx.fragment.app.FragmentManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.media.MediaCas;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
-import android.se.omapi.Session;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -20,23 +17,15 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.HttpHeaderParser;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.example.application.delivery.DeliveryManActivity;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.net.CookieHandler;
-import java.net.CookieManager;
-import java.net.CookieStore;
-import java.net.HttpCookie;
-import java.net.URLConnection;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 
 public class MainActivity extends AppCompatActivity{
@@ -48,6 +37,9 @@ public class MainActivity extends AppCompatActivity{
     boolean member;
     SharedPreferences pref;
     static boolean count = true;
+
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,6 +53,9 @@ public class MainActivity extends AppCompatActivity{
         sign_up =(Button)findViewById(R.id.sign_up);
         requestqueue = Volley.newRequestQueue(this);
 
+        Intent intent = new Intent(MainActivity.this, DeliveryManActivity.class);
+        startActivity(intent);
+
         sign_in.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -71,7 +66,7 @@ public class MainActivity extends AppCompatActivity{
         sign_up.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, signUpActivity.class);
+                Intent intent = new Intent(MainActivity.this, SignUpActivity.class);
                 startActivity(intent);
             }
         });
@@ -119,6 +114,7 @@ public class MainActivity extends AppCompatActivity{
             protected Response<JSONObject> parseNetworkResponse(NetworkResponse response) {
                 Map<String, String> headers = response.headers;
                 String cookie = (String)headers.get("Set-Cookie");
+
                 if(cookie!=null) {
                     setCookie(cookie);
                 }
