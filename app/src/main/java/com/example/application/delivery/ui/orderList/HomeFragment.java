@@ -1,4 +1,4 @@
-package com.example.application.delivery.ui.home;
+package com.example.application.delivery.ui.orderList;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -20,6 +20,10 @@ public class HomeFragment extends Fragment {
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
+        //nav transfer
+//        NavController controller= Navigation.findNavController(container);
+//        controller.navigate(R.id.nav_gallery);
+
         homeViewModel =
                 ViewModelProviders.of(this).get(HomeViewModel.class);
         View root = inflater.inflate(R.layout.delivery_fragment_home, container, false);
@@ -32,4 +36,6 @@ public class HomeFragment extends Fragment {
         });
         return root;
     }
+
+
 }
