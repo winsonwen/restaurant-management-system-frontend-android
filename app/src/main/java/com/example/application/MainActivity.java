@@ -53,12 +53,13 @@ public class MainActivity extends AppCompatActivity{
         sign_up =(Button)findViewById(R.id.sign_up);
         requestqueue = Volley.newRequestQueue(this);
 
-        Intent intent = new Intent(MainActivity.this, DeliveryManActivity.class);
-        startActivity(intent);
+//        Intent intent = new Intent(MainActivity.this, DeliveryManActivity.class);
+//        startActivity(intent);
 
         sign_in.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 signIn(userName.getText().toString(), password.getText().toString());
             }
         });
@@ -99,13 +100,13 @@ public class MainActivity extends AppCompatActivity{
 
                 Map<String, String> map = new HashMap<String, String>();
 
-                SharedPreferences sharedPreferences2  = getSharedPreferences("loginUser", Context.MODE_PRIVATE);
-                String name = sharedPreferences2.getString("loginUser", null);
-                Long time = sharedPreferences2.getLong("loginUserTime",0);
-                if(name!=null && time==0 ) {
-                    if((System.currentTimeMillis()-time)>86400000)
-                        map.put("cookie", name);
-                }
+//                SharedPreferences sharedPreferences2  = getSharedPreferences(Properties.USER_SESS, Context.MODE_PRIVATE);
+//                String name = sharedPreferences2.getString(Properties.USER_SESS, null);
+//                Long time = sharedPreferences2.getLong(Properties.USER_LOGIN_TIME,0);
+//                if(name!=null && time==0 ) {
+//                    if((System.currentTimeMillis()-time)<86400000)
+//                        map.put("cookie", name);
+//                }
                 return map;
 
             }
@@ -114,7 +115,6 @@ public class MainActivity extends AppCompatActivity{
             protected Response<JSONObject> parseNetworkResponse(NetworkResponse response) {
                 Map<String, String> headers = response.headers;
                 String cookie = (String)headers.get("Set-Cookie");
-
                 if(cookie!=null) {
                     setCookie(cookie);
                 }
@@ -123,7 +123,6 @@ public class MainActivity extends AppCompatActivity{
             }
 
         };
-
         requestqueue.add(request);
     }
 
@@ -134,13 +133,39 @@ public class MainActivity extends AppCompatActivity{
                 try {
                     if("0".equals(result.getString("code"))){
                         Toast.makeText(getApplicationContext(),"Sign in success", Toast.LENGTH_LONG).show();
-                        System.out.println(result.toString());
 
-                        // 2-> employee   1 -> customer
-                        if("1".equals(result.get("type"))){
-//                            System.out.println("111");
-                        }else if("2".equals(result.get("type"))){
-//                            System.out.println("222");
+                        // 2-> employee
+                        if("2".equals(result.get("type"))){
+
+                            System.out.println("Employee Signed in");
+                            JSONObject memberInfo = result.getJSONObject(Properties.EMPLOYEE_INFO);
+                            System.out.println(memberInfo.toString());
+
+                            SharedPreferences sharedPreferences = getSharedPreferences(
+                                    Properties.STORAGE, Context.MODE_PRIVATE);
+                            SharedPreferences.Editor editor = sharedPreferences.edit();
+                            editor.remove(Properties.EMPLOYEE_INFO);
+                            editor.putString(Properties.EMPLOYEE_INFO,memberInfo.toString());
+                            editor.commit();
+                            
+
+                            Intent intent = new Intent(MainActivity.this, DeliveryManActivity.class);
+                            startActivity(intent);
+                        //  1 -> customer
+                        }else if("1".equals(result.get("type"))){
+                            System.out.println("customer signed in");
+                            JSONObject memberInfo = result.getJSONObject(Properties.USER_INFO);
+                            System.out.println(memberInfo.toString());
+
+                            SharedPreferences sharedPreferences = getSharedPreferences(
+                                    Properties.STORAGE, Context.MODE_PRIVATE);
+                            SharedPreferences.Editor editor = sharedPreferences.edit();
+                            editor.remove(Properties.USER_INFO);
+                            editor.putString(Properties.USER_INFO, memberInfo.toString());
+                            editor.commit();
+
+                            Intent intent = new Intent(MainActivity.this, User.class);
+                            startActivity(intent);
                         }
                     }
                 } catch (JSONException e) {
@@ -156,12 +181,12 @@ public class MainActivity extends AppCompatActivity{
             public void run() {
 
                     SharedPreferences sharedPreferences = getSharedPreferences(
-                            "loginUser", Context.MODE_PRIVATE);
+                            Properties.STORAGE, Context.MODE_PRIVATE);
                     SharedPreferences.Editor editor = sharedPreferences.edit();
-                    editor.remove("loginUser");
-                    editor.remove("loginUserTime");
-                    editor.putString("loginUser", result);
-                    editor.putLong("loginUserTime",System.currentTimeMillis());
+                    editor.remove(Properties.USER_SESS);
+                    editor.remove(Properties.USER_LOGIN_TIME);
+                    editor.putString(Properties.USER_SESS, result);
+                    editor.putLong(Properties.USER_LOGIN_TIME,System.currentTimeMillis());
                     editor.commit();
 
             }
