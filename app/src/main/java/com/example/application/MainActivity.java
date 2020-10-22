@@ -153,8 +153,21 @@ public class MainActivity extends AppCompatActivity{
                             startActivity(intent);
                         //  1 -> customer
                         }else if("1".equals(result.get("type"))){
-//                            System.out.println("222");
+
                             System.out.println("customer signed in");
+                            JSONObject memberInfo = result.getJSONObject(Properties.USER_INFO);
+                            System.out.println(memberInfo.toString());
+
+                            SharedPreferences sharedPreferences = getSharedPreferences(
+                                    Properties.STORAGE, Context.MODE_PRIVATE);
+                            SharedPreferences.Editor editor = sharedPreferences.edit();
+                            editor.remove(Properties.USER_INFO);
+                            editor.putString(Properties.USER_INFO, memberInfo.toString());
+                            editor.commit();
+
+                            Intent intent = new Intent(MainActivity.this, User.class);
+                            startActivity(intent);
+
                         }
                     }
                 } catch (JSONException e) {

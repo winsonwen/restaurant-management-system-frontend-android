@@ -141,10 +141,6 @@ public class SignUpActivity extends Activity {
                 } catch (JSONException e) {
                         e.printStackTrace();
                 }
-
-
-
-
             }
         });
     }

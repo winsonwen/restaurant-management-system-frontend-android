@@ -35,6 +35,11 @@
             android:name=".delivery.DeliveryManActivity"
             android:label="@string/title_activity_delivery_man"
             android:theme="@style/AppTheme.NoActionBar" />
+
+        <activity
+            android:name=".User"
+            android:label="UserAccount"
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".SignUpActivity"
             android:label="signup form" />
