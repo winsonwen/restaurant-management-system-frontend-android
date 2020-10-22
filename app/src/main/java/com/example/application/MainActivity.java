@@ -153,6 +153,7 @@ public class MainActivity extends AppCompatActivity{
                             startActivity(intent);
                         //  1 -> customer
                         }else if("1".equals(result.get("type"))){
+
                             System.out.println("customer signed in");
                             JSONObject memberInfo = result.getJSONObject(Properties.USER_INFO);
                             System.out.println(memberInfo.toString());
@@ -166,6 +167,7 @@ public class MainActivity extends AppCompatActivity{
 
                             Intent intent = new Intent(MainActivity.this, User.class);
                             startActivity(intent);
+
                         }
                     }
                 } catch (JSONException e) {

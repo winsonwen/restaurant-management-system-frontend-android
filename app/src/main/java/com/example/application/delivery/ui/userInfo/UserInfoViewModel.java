@@ -1,14 +1,14 @@
-package com.example.application.delivery.ui.gallery;
+package com.example.application.delivery.ui.userInfo;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-public class GalleryViewModel extends ViewModel {
+public class UserInfoViewModel extends ViewModel {
 
     private MutableLiveData<String> mText;
 
-    public GalleryViewModel() {
+    public UserInfoViewModel() {
         mText = new MutableLiveData<>();
         mText.setValue("This is gallery fragment");
     }
