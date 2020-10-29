@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.NetworkResponse;
@@ -131,7 +132,9 @@ public class MainActivity extends AppCompatActivity{
             @Override
             public void run() {
                 try {
-                    if("0".equals(result.getString("code"))){
+                    System.out.println(result);
+                    String code = result.getString("code");
+                    if("0".equals(code)){
                         Toast.makeText(getApplicationContext(),"Sign in success", Toast.LENGTH_LONG).show();
 
                         // 2-> employee
@@ -169,6 +172,10 @@ public class MainActivity extends AppCompatActivity{
                             startActivity(intent);
 
                         }
+                    }else if("402".equals(code)){
+                        TextView textView = (TextView) findViewById(R.id.textView13);
+                        textView.setText(result.getString("msg"));
+
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();

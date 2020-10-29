@@ -20,13 +20,13 @@ import com.android.volley.toolbox.Volley;
 import com.example.application.MainActivity;
 import com.example.application.Properties;
 import com.example.application.R;
-import com.example.application.SignIn;
-import com.example.application.SignUpActivity;
 import com.example.application.delivery.ui.logout.LogOutFragment;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.navigation.NavigationView;
 
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.ViewModelProviders;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
@@ -48,6 +48,7 @@ public class DeliveryManActivity extends AppCompatActivity implements LogOutFrag
     RequestQueue requestqueue;
     TextView textView5;
     TextView textView;
+    private SharedViewModel sharedViewModel;
 
 
     @Override
@@ -57,6 +58,21 @@ public class DeliveryManActivity extends AppCompatActivity implements LogOutFrag
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         requestqueue = Volley.newRequestQueue(this);
+
+
+        sharedViewModel = ViewModelProviders.of(this).get(SharedViewModel.class);
+//        SharedPreferences sharedPreferences2  = getSharedPreferences(Properties.STORAGE, Context.MODE_PRIVATE);
+//        String employeeInfo = sharedPreferences2.getString(Properties.EMPLOYEE_INFO, null);
+//
+//        try {
+//            JSONObject result = new JSONObject(employeeInfo);
+//            System.out.println(result.toString());
+//            sharedViewModel.setRes(result);
+//        } catch (JSONException e) {
+//            e.printStackTrace();
+//        }
+//        sharedViewModel.setRequestqueue(requestqueue);
+
 
         FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -97,10 +113,9 @@ public class DeliveryManActivity extends AppCompatActivity implements LogOutFrag
 
         textView = findViewById(R.id.textView);
         textView5 = findViewById(R.id.textView5);
-        SharedPreferences sharedPreferences2  = getSharedPreferences(Properties.STORAGE, Context.MODE_PRIVATE);
-        String employeeInfo = sharedPreferences2.getString(Properties.EMPLOYEE_INFO, null);
+
+        JSONObject result = sharedViewModel.getRes();
         try {
-            JSONObject result = new JSONObject(employeeInfo); // String 转 JSONObject
             textView.setText(result.getString("email"));
             textView5.setText( result.getString("firstName") +" "+result.getString("lastName"));
         } catch (JSONException e) {
