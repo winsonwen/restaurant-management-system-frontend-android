@@ -25,38 +25,39 @@ import java.util.Map;
 
 public class SignUpActivity extends Activity {
     RequestQueue requestqueue;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_signup);
 
-        final EditText username, password, comfirmPassword,firstName, lastName, phoneNumber,email;
+        final EditText username, password, comfirmPassword, firstName, lastName, phoneNumber, email;
         final Button submit;
-        username = (EditText)findViewById(R.id.Username);
-        password = (EditText)findViewById(R.id.Password);
-        comfirmPassword = (EditText)findViewById(R.id.Password2);
-        firstName = (EditText)findViewById(R.id.Firstname);
-        lastName = (EditText)findViewById(R.id.Lastname);
-        phoneNumber = (EditText)findViewById(R.id.Phone);
-        email = (EditText)findViewById(R.id.Email);
-        submit = (Button)findViewById(R.id.Submit);
+        username = (EditText) findViewById(R.id.Username);
+        password = (EditText) findViewById(R.id.Password);
+        comfirmPassword = (EditText) findViewById(R.id.Password2);
+        firstName = (EditText) findViewById(R.id.Firstname);
+        lastName = (EditText) findViewById(R.id.Lastname);
+        phoneNumber = (EditText) findViewById(R.id.Phone);
+        email = (EditText) findViewById(R.id.Email);
+        submit = (Button) findViewById(R.id.Submit);
         requestqueue = Volley.newRequestQueue(this);
 
 
-        submit.setOnClickListener(new View.OnClickListener(){
+        submit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(password.getText().toString().equals(comfirmPassword.getText().toString()) == true) {
+                if (password.getText().toString().equals(comfirmPassword.getText().toString()) == true) {
                     submit(username.getText().toString(), password.getText().toString(), firstName.getText().toString(), lastName.getText().toString(), phoneNumber.getText().toString(), email.getText().toString());
 
-                }else{
-                    Toast.makeText(getApplicationContext(),"Sign up failed, passwords does not match", Toast.LENGTH_LONG).show();
+                } else {
+                    Toast.makeText(getApplicationContext(), "Sign up failed, passwords does not match", Toast.LENGTH_LONG).show();
                 }
             }
         });
     }
 
-    public void submit(final String username, final String password, final String firstName, final String lastName, final String phoneNumber, final String Email){
+    public void submit(final String username, final String password, final String firstName, final String lastName, final String phoneNumber, final String Email) {
         HashMap<String, String> map = new HashMap<String, String>();
         map.put("userName", username);
         map.put("passwords", password);
@@ -84,62 +85,102 @@ public class SignUpActivity extends Activity {
             @Override
             public void run() {
                 try {
-                    if("0".equals(result.getString("code"))){
-                        Toast.makeText(getApplicationContext(),"Sign up success", Toast.LENGTH_LONG).show();
+                    if ("0".equals(result.getString("code"))) {
+                        Toast.makeText(getApplicationContext(), "Sign up success", Toast.LENGTH_LONG).show();
                         Intent intent = new Intent(SignUpActivity.this, MainActivity.class);
                         startActivity(intent);
 
-                    }else {
+                    } else if ("501".equals(equals(result.getString("code")))) {
+
+
+                        TextView textView = (TextView) findViewById(R.id.firstRes);
+                        textView.setText(result.getString("msg"));
+
+                        textView = (TextView) findViewById(R.id.firstRes);
+                        textView.setText("");
+                        textView = (TextView) findViewById(R.id.lastRes);
+                        textView.setText("");
+                        textView = (TextView) findViewById(R.id.phoneRes);
+                        textView.setText("");
+                        textView = (TextView) findViewById(R.id.userRes);
+                        textView.setText("");
+                        textView = (TextView) findViewById(R.id.emailRes);
+                        textView.setText("");
+                        textView = (TextView) findViewById(R.id.passRes);
+                        textView.setText("");
+
+
+                    } else {
+                        System.out.println(result);
                         JSONObject obj = result.getJSONObject("data");
 
-                        Map<String,String> map = new HashMap<>();
+                        Map<String, String> map = new HashMap<>();
                         Iterator<String> iterator = obj.keys();
-                        while(iterator.hasNext())
-                        {
-                            String key = (String)iterator.next();
+                        while (iterator.hasNext()) {
+                            String key = (String) iterator.next();
                             String value = (String) obj.get(key);
                             map.put(key, value);
                         }
                         String msg;
                         System.out.println(map);
                         msg = map.get("firstName");
-                        if(msg!=null){
-                            TextView textView = (TextView)findViewById(R.id.firstRes);
+                        TextView textView;
+                        if (msg != null) {
+                            textView = (TextView) findViewById(R.id.firstRes);
                             textView.setText(msg);
-
+                        } else {
+                            textView = (TextView) findViewById(R.id.firstRes);
+                            textView.setText("");
                         }
 
                         msg = map.get("lastName");
-                        if(msg!=null){
-                            TextView textView = (TextView)findViewById(R.id.lastRes);
+                        if (msg != null) {
+                            textView = (TextView) findViewById(R.id.lastRes);
                             textView.setText(msg);
-
+                        } else {
+                            textView = (TextView) findViewById(R.id.lastRes);
+                            textView.setText("");
                         }
+
+
                         msg = map.get("phoneNumber");
-                        if(msg!=null){
-                            TextView textView = (TextView)findViewById(R.id.phoneRes);
+                        if (msg != null) {
+                            textView = (TextView) findViewById(R.id.phoneRes);
                             textView.setText(msg);
-
+                        } else {
+                            textView = (TextView) findViewById(R.id.phoneRes);
+                            textView.setText("");
                         }
-                        msg = map.get("userName");
-                        if(msg!=null){
-                            TextView textView = (TextView)findViewById(R.id.userRes);
+
+                        msg = map.get("");
+                        if (msg != null) {
+                            textView = (TextView) findViewById(R.id.userRes);
                             textView.setText(msg);
-
+                        } else {
+                            textView = (TextView) findViewById(R.id.userRes);
+                            textView.setText("");
                         }
+
+
                         msg = map.get("email");
-                        if(msg!=null){
-                            TextView textView = (TextView)findViewById(R.id.emailRes);
+                        if (msg != null) {
+                            textView = (TextView) findViewById(R.id.emailRes);
                             textView.setText(msg);
+                        } else {
+                            textView = (TextView) findViewById(R.id.emailRes);
+                            textView.setText("");
                         }
                         msg = map.get("passwords");
-                        if(msg!=null){
-                            TextView textView = (TextView)findViewById(R.id.passRes);
+                        if (msg != null) {
+                            textView = (TextView) findViewById(R.id.passRes);
                             textView.setText(msg);
+                        } else {
+                            textView = (TextView) findViewById(R.id.passRes);
+                            textView.setText("");
                         }
                     }
                 } catch (JSONException e) {
-                        e.printStackTrace();
+                    e.printStackTrace();
                 }
             }
         });
