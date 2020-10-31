@@ -17,7 +17,7 @@
 
     <fragment
         android:id="@+id/fragment"
-        android:name="com.example.application.user.UI.userAccount.userFragment"
+        android:name="com.example.application.user.ui.userInfo.UserInfoFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_constraintBottom_toBottomOf="parent"
