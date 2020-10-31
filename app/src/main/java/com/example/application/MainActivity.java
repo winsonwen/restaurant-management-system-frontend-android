@@ -169,7 +169,7 @@ public class MainActivity extends AppCompatActivity{
                             editor.putString(Properties.USER_INFO, memberInfo.toString());
                             editor.commit();
 
-                            Intent intent = new Intent(MainActivity.this, User.class);
+                            Intent intent = new Intent(MainActivity.this, UserActivity.class);
                             startActivity(intent);
 
                         }
