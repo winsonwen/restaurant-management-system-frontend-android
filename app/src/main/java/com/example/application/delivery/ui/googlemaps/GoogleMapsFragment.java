@@ -22,6 +22,9 @@ public class GoogleMapsFragment extends Fragment {
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
+
+
+
         mViewModel =
                 ViewModelProviders.of(this).get(GoogleMapsViewModel.class);
         View root = inflater.inflate(R.layout.delivery_fragment_google_maps, container, false);

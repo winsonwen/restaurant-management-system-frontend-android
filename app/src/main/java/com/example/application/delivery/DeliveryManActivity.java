@@ -38,10 +38,11 @@ import androidx.appcompat.widget.Toolbar;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.security.Permission;
 import java.util.HashMap;
 import java.util.Map;
 
-public class DeliveryManActivity extends AppCompatActivity implements LogOutFragment.LogOutListener {
+public class DeliveryManActivity extends AppCompatActivity  implements LogOutFragment.LogOutListener {
 
     private AppBarConfiguration mAppBarConfiguration;
     Button logoutb;
@@ -59,19 +60,8 @@ public class DeliveryManActivity extends AppCompatActivity implements LogOutFrag
         setSupportActionBar(toolbar);
         requestqueue = Volley.newRequestQueue(this);
 
-
         sharedViewModel = ViewModelProviders.of(this).get(SharedViewModel.class);
-//        SharedPreferences sharedPreferences2  = getSharedPreferences(Properties.STORAGE, Context.MODE_PRIVATE);
-//        String employeeInfo = sharedPreferences2.getString(Properties.EMPLOYEE_INFO, null);
-//
-//        try {
-//            JSONObject result = new JSONObject(employeeInfo);
-//            System.out.println(result.toString());
-//            sharedViewModel.setRes(result);
-//        } catch (JSONException e) {
-//            e.printStackTrace();
-//        }
-//        sharedViewModel.setRequestqueue(requestqueue);
+
 
 
         FloatingActionButton fab = findViewById(R.id.fab);
@@ -104,6 +94,7 @@ public class DeliveryManActivity extends AppCompatActivity implements LogOutFrag
         // Inflate the menu; this adds items to the action bar if it is present.
         // settings
         getMenuInflater().inflate(R.menu.delivery_man, menu);
+
         return true;
     }
 

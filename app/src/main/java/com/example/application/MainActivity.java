@@ -54,6 +54,7 @@ public class MainActivity extends AppCompatActivity{
         sign_up =(Button)findViewById(R.id.sign_up);
         requestqueue = Volley.newRequestQueue(this);
 
+        // TODO googlemaps
 //        Intent intent = new Intent(MainActivity.this, DeliveryManActivity.class);
 //        startActivity(intent);
 
