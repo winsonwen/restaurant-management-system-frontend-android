@@ -47,7 +47,7 @@ public class UserActivity extends AppCompatActivity implements LogOutFragment.Lo
     RequestQueue requestqueue;
     TextView textView5;
     TextView textView;
-    private SharedViewModel sharedViewModel;
+    private userSharedViewModel sharedViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,7 +58,7 @@ public class UserActivity extends AppCompatActivity implements LogOutFragment.Lo
         requestqueue = Volley.newRequestQueue(this);
 
 
-        sharedViewModel = ViewModelProviders.of(this).get(SharedViewModel.class);
+        sharedViewModel = ViewModelProviders.of(this).get(userSharedViewModel.class);
         FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
