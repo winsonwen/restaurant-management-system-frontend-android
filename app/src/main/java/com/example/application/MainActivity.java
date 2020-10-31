@@ -21,6 +21,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.application.delivery.DeliveryManActivity;
+import com.example.application.user.UserActivity;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -54,7 +55,6 @@ public class MainActivity extends AppCompatActivity{
         sign_up =(Button)findViewById(R.id.sign_up);
         requestqueue = Volley.newRequestQueue(this);
 
-        // TODO googlemaps
 //        Intent intent = new Intent(MainActivity.this, DeliveryManActivity.class);
 //        startActivity(intent);
 
