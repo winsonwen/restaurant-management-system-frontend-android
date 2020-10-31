@@ -60,6 +60,7 @@ public class DeliveryManActivity extends AppCompatActivity  implements LogOutFra
         setSupportActionBar(toolbar);
         requestqueue = Volley.newRequestQueue(this);
 
+
         sharedViewModel = ViewModelProviders.of(this).get(SharedViewModel.class);
 
 
