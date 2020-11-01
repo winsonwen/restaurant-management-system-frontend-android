@@ -40,7 +40,7 @@ public class HomeFragment extends Fragment {
         //nav transfer
 //        NavController controller= Navigation.findNavController(container);
 //        controller.navigate(R.id.nav_googlemaps);
-
+        System.out.println("??????????!!!");
         View root = inflater.inflate(R.layout.delivery_fragment_home, container, false);
 
         button = (Button) root.findViewById(R.id.button2);

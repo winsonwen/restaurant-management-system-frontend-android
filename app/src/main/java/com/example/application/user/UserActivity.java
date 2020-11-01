@@ -28,8 +28,6 @@ import com.android.volley.toolbox.Volley;
 import com.example.application.MainActivity;
 import com.example.application.Properties;
 import com.example.application.R;
-import com.example.application.delivery.DeliveryManActivity;
-import com.example.application.delivery.SharedViewModel;
 import com.example.application.delivery.ui.logout.LogOutFragment;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
@@ -53,13 +51,13 @@ public class UserActivity extends AppCompatActivity implements LogOutFragment.Lo
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.user_activity_user);
-        Toolbar toolbar = findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar_user);
         setSupportActionBar(toolbar);
         requestqueue = Volley.newRequestQueue(this);
 
 
         sharedViewModel = ViewModelProviders.of(this).get(userSharedViewModel.class);
-        FloatingActionButton fab = findViewById(R.id.fab);
+        FloatingActionButton fab = findViewById(R.id.fab_user);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -67,16 +65,16 @@ public class UserActivity extends AppCompatActivity implements LogOutFragment.Lo
                         .setAction("Action", null).show();
             }
         });
-        DrawerLayout drawer = findViewById(R.id.drawer_layout);
-        NavigationView navigationView = findViewById(R.id.nav_view);
+        DrawerLayout drawer = findViewById(R.id.drawer_layout_user);
+        NavigationView navigationView = findViewById(R.id.nav_view_user);
 
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         mAppBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.nav_home, R.id.nav_gallery, R.id.nav_logout, R.id.nav_googlemaps)
+                R.id.nav_home_user, R.id.nav_gallery_user, R.id.nav_logout_user, R.id.nav_googlemaps_user)
                 .setDrawerLayout(drawer)
                 .build();
-        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
+        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_user);
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(navigationView, navController);
     }
@@ -85,12 +83,12 @@ public class UserActivity extends AppCompatActivity implements LogOutFragment.Lo
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         // settings
-        getMenuInflater().inflate(R.menu.delivery_man, menu);
+        getMenuInflater().inflate(R.menu.user, menu);
         return true;
     }
     @Override
     public boolean onSupportNavigateUp() {
-        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
+        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_user);
 
         textView = findViewById(R.id.textView);
         textView5 = findViewById(R.id.textView5);
@@ -102,7 +100,6 @@ public class UserActivity extends AppCompatActivity implements LogOutFragment.Lo
         } catch (JSONException e) {
             e.printStackTrace();
         }
-
 
 
         return NavigationUI.navigateUp(navController, mAppBarConfiguration)

@@ -30,4 +30,5 @@
     <string name="menu_logout">Log Out</string>
     <string name="menu_googlemaps">GoogleMaps</string>
     <string name="title_activity_delivery_man1">DeliveryMan1Activity</string>
+    <string name="menu_home_user">Home_user</string>
 </resources>

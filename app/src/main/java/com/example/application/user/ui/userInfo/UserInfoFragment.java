@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -38,6 +39,7 @@ public class UserInfoFragment extends Fragment {
     TextView textView3;
     TextView textView4;
     Button button;
+    private boolean verify = false;
     RequestQueue requestqueue;
     private userSharedViewModel sharedViewModel;
 
@@ -85,6 +87,12 @@ public class UserInfoFragment extends Fragment {
                     textView2.setText(result.getString("lastName"));
                     textView3.setText(result.getString("email"));
                     textView4.setText(result.getString("phone"));
+
+                    if(verify==true) {
+                        Toast.makeText(getContext(), "Updated successfully!!", Toast.LENGTH_SHORT).show();
+                    }else  {
+                        verify=true;
+                    }
 
                     TextView textView;
 
