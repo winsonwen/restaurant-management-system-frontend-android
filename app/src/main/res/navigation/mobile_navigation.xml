@@ -8,8 +8,8 @@
     <fragment
         android:id="@+id/nav_home"
         android:name="com.example.application.delivery.ui.orderList.HomeFragment"
-        android:label="@string/menu_home"
-        tools:layout="@layout/delivery_fragment_home" />
+        android:label="@string/menu_order"
+        tools:layout="@layout/delivery_fragment_order" />
 
     <fragment
         android:id="@+id/nav_gallery"
