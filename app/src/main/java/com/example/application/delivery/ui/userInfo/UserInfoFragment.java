@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -39,7 +40,7 @@ public class UserInfoFragment extends Fragment {
     Button button;
     RequestQueue requestqueue;
     private SharedViewModel sharedViewModel;
-
+    private boolean verify = false;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -48,6 +49,7 @@ public class UserInfoFragment extends Fragment {
         View root = inflater.inflate(R.layout.delivery_fragment_user_info, container, false);
 
         sharedViewModel = ViewModelProviders.of(getActivity()).get(SharedViewModel.class);
+
 
         textView = root.findViewById(R.id.editTextTextPersonName);
         textView2 = root.findViewById(R.id.editTextTextPersonName2);
@@ -84,7 +86,11 @@ public class UserInfoFragment extends Fragment {
                     textView2.setText(result.getString("lastName"));
                     textView3.setText(result.getString("email"));
                     textView4.setText(result.getString("phone"));
-
+                    if(verify==true) {
+                        Toast.makeText(getContext(), "Updated successfully!!", Toast.LENGTH_SHORT).show();
+                    }else  {
+                        verify=true;
+                    }
                     TextView textView;
 
                     textView = (TextView) getActivity().findViewById(R.id.textView10);
