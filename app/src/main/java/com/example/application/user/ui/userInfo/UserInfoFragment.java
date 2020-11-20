@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -20,6 +21,7 @@ import com.example.application.Properties;
 import com.example.application.R;
 import com.example.application.delivery.SharedViewModel;
 import com.example.application.delivery.ui.userInfo.UserInfoViewModel;
+import com.example.application.user.userSharedViewModel;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -37,8 +39,9 @@ public class UserInfoFragment extends Fragment {
     TextView textView3;
     TextView textView4;
     Button button;
+    private boolean verify = false;
     RequestQueue requestqueue;
-    private SharedViewModel sharedViewModel;
+    private userSharedViewModel sharedViewModel;
 
 
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -47,7 +50,7 @@ public class UserInfoFragment extends Fragment {
                 ViewModelProviders.of(this).get(UserInfoViewModel.class);
         View root = inflater.inflate(R.layout.user_fragment_user_info, container, false);
 
-        sharedViewModel = ViewModelProviders.of(getActivity()).get(SharedViewModel.class);
+        sharedViewModel = ViewModelProviders.of(getActivity()).get(userSharedViewModel.class);
 
         textView = root.findViewById(R.id.editTextTextPersonName);
         textView2 = root.findViewById(R.id.editTextTextPersonName2);
@@ -84,6 +87,12 @@ public class UserInfoFragment extends Fragment {
                     textView2.setText(result.getString("lastName"));
                     textView3.setText(result.getString("email"));
                     textView4.setText(result.getString("phone"));
+
+                    if(verify==true) {
+                        Toast.makeText(getContext(), "Updated successfully!!", Toast.LENGTH_SHORT).show();
+                    }else  {
+                        verify=true;
+                    }
 
                     TextView textView;
 
