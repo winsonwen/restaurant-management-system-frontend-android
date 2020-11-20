@@ -1,23 +1,39 @@
 package com.example.application.user.ui.googlemaps;
 
+import android.Manifest;
+import android.content.Context;
+import android.content.pm.PackageManager;
+import android.location.Location;
+import android.location.LocationManager;
+import android.location.LocationProvider;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import com.example.application.R;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Polyline;
 
-public class MapsFragment extends Fragment {
+public class MapsFragment extends Fragment implements GoogleMap.OnMyLocationButtonClickListener,
+        GoogleMap.OnMyLocationClickListener{
+
+    private boolean permissionDenied = false;
+    private static final int Location_Permission_Request_Code =1;
+    private GoogleMap map;
 
     private OnMapReadyCallback callback = new OnMapReadyCallback() {
 
@@ -32,11 +48,31 @@ public class MapsFragment extends Fragment {
          */
         @Override
         public void onMapReady(GoogleMap googleMap) {
-            LatLng sydney = new LatLng(-34, 151);
-            googleMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
-            googleMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+            map = googleMap;
+            enableMyLocation();
+
+            //map.addMarker(delivery_man.position(delivery_locate));
         }
     };
+
+    private void enableMyLocation() {
+        System.out.println(ContextCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION));
+        System.out.println(PackageManager.PERMISSION_GRANTED);
+        if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION)
+                == PackageManager.PERMISSION_GRANTED) {
+            System.out.println("11111111");
+            if (map != null) {
+                System.out.println("333333");
+                map.setMyLocationEnabled(true);
+                map.setOnMyLocationButtonClickListener(this);
+                map.setOnMyLocationClickListener(this);
+            }
+        } else {
+            // Permission to access the location is missing. Show rationale and request permission
+            String[] strings = {Manifest.permission.ACCESS_FINE_LOCATION};
+            ActivityCompat.requestPermissions(getActivity(), strings, Location_Permission_Request_Code);
+        }
+    }
 
     @Nullable
     @Override
@@ -54,5 +90,31 @@ public class MapsFragment extends Fragment {
         if (mapFragment != null) {
             mapFragment.getMapAsync(callback);
         }
+    }
+
+    @Override
+    public boolean onMyLocationButtonClick() {
+        LocationManager locationManager = (LocationManager) getContext().getSystemService(Context.LOCATION_SERVICE);
+        LocationProvider lProvider = locationManager.getProvider(LocationManager.NETWORK_PROVIDER);
+
+        if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION)
+                == PackageManager.PERMISSION_GRANTED) {
+            locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+            Location location=locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+
+            String loca = "location" + "("  + location.getLatitude() + ", " + location.getLongitude()+")";
+            Toast.makeText( getContext(), loca, Toast.LENGTH_SHORT).show();
+        } else {
+            // Permission to access the location is missing. Show rationale and request permission
+            String[] strings = {Manifest.permission.ACCESS_FINE_LOCATION};
+            ActivityCompat.requestPermissions(getActivity(), strings, Location_Permission_Request_Code);
+        }
+        return false;
+    }
+
+    @Override
+    public void onMyLocationClick(@NonNull Location location) {
+        System.out.println(" onMyLocationClick");
+        Toast.makeText(getActivity(), "Current location:\n" + location, Toast.LENGTH_LONG).show();
     }
 }

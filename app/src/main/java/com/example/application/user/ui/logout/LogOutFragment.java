@@ -20,9 +20,4 @@ public class LogOutFragment extends Fragment {
         }
     }
 
-
-    public interface LogOutListener{
-        void LogOutInteraction();
-    }
-
 }
