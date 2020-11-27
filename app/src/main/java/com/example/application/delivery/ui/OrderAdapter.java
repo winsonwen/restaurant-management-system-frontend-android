@@ -22,6 +22,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import com.example.application.R;
+import com.example.application.delivery.SharedViewModel;
 import com.example.application.delivery.ui.entity.OrderEntity;
 
 import java.util.ArrayList;
@@ -33,11 +34,13 @@ public class OrderAdapter extends BaseAdapter {
     ArrayList<OrderEntity> orderEntities;
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
     Activity activity;
+    SharedViewModel sharedViewModel;
 
-    public OrderAdapter (Context context, Activity activity, ArrayList orderEntities) {
+    public OrderAdapter (Context context, Activity activity, ArrayList orderEntities, SharedViewModel sharedViewModel) {
         this.context = context;
         this.orderEntities = orderEntities;
         this.activity = activity;
+        this.sharedViewModel = sharedViewModel;
     }
 
     @Override
@@ -99,6 +102,9 @@ public class OrderAdapter extends BaseAdapter {
 
                     if (ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION)
                             == PackageManager.PERMISSION_GRANTED) {
+
+                        sharedViewModel.updateDeliveryManLocation();
+
                         locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
                         Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
 
@@ -115,7 +121,8 @@ public class OrderAdapter extends BaseAdapter {
                                 + -75.154054 + "&hl=en"));
                         i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK & Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
                         i.setClassName("com.google.android.apps.maps", "com.google.android.maps.MapsActivity");
-                        context.startActivity(i);
+
+//                     TODO   context.startActivity(i);
 
                     } else {
                         // Permission to access the location is missing. Show rationale and request permission
@@ -151,6 +158,10 @@ public class OrderAdapter extends BaseAdapter {
             customerAddress.setVisibility(View.GONE);
             customerPhone.setVisibility(View.GONE);
             orderList.setVisibility(View.GONE);
+        }else if (orderStatus==5){
+            oderStatusTextView.setText("Please Wait for Delivering");
+            deliveryButton.setText("Delivering");
+
         }
 
         return convertView;

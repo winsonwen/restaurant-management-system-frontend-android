@@ -18,6 +18,17 @@ public class OrderEntity {
 
     int orderStatus;
 
+    @Override
+    public String toString() {
+        return "OrderEntity{" +
+                "orderId=" + orderId +
+                ", foodItems='" + foodItems + '\'' +
+                ", quantity=" + quantity +
+                ", orderTotal=" + orderTotal +
+                ", customerEntity=" + customerEntity +
+                ", orderStatus=" + orderStatus +
+                '}';
+    }
 
     public OrderEntity(int orderId, String foodItems, int quantity, Double orderTotal, CustomerEntity customerEntity, int orderStatus) {
         this.orderId = orderId;

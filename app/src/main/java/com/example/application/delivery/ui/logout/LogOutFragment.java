@@ -16,14 +16,17 @@ import androidx.lifecycle.ViewModelProviders;
 
 import com.example.application.R;
 import com.example.application.delivery.DeliveryManActivity;
+import com.example.application.delivery.SharedViewModel;
 
 public class LogOutFragment extends Fragment {
 
     private LogOutListener logOutListener;
+    SharedViewModel sharedViewModel;
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-
+        sharedViewModel = ViewModelProviders.of(this).get(SharedViewModel.class);
+        sharedViewModel.stopLocationFuture();
 
         if (context instanceof LogOutListener) {
             logOutListener = (LogOutListener) context;

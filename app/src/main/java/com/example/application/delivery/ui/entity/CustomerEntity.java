@@ -7,6 +7,16 @@ public class CustomerEntity {
     private String phone;
     public String stressName;
 
+    @Override
+    public String toString() {
+        return "CustomerEntity{" +
+                "firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", phone='" + phone + '\'' +
+                ", stressName='" + stressName + '\'' +
+                '}';
+    }
+
     public CustomerEntity(String firstName, String lastName, String phone, String stressName) {
         this.firstName = firstName;
         this.lastName = lastName;
