@@ -21,30 +21,22 @@ import androidx.fragment.app.Fragment;
 import com.example.application.R;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Polyline;
 
 public class MapsFragment extends Fragment implements GoogleMap.OnMyLocationButtonClickListener,
-        GoogleMap.OnMyLocationClickListener {
+        GoogleMap.OnMyLocationClickListener{
 
-    /**
-     * Request code for location permission request.
-     *
-     * @see #onRequestPermissionsResult(int, String[], int[])
-     */
-    private static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
-
-    /**
-     * Flag indicating whether a requested permission has been denied after returning in
-     * {@link #onRequestPermissionsResult(int, String[], int[])}.
-     */
     private boolean permissionDenied = false;
-
+    private static final int Location_Permission_Request_Code =1;
     private GoogleMap map;
 
     private OnMapReadyCallback callback = new OnMapReadyCallback() {
+
         /**
          * Manipulates the map once available.
          * This callback is triggered when the map is ready to be used.
@@ -56,27 +48,14 @@ public class MapsFragment extends Fragment implements GoogleMap.OnMyLocationButt
          */
         @Override
         public void onMapReady(GoogleMap googleMap) {
-//            LatLng sydney = new LatLng(151, 151);
-//            googleMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
-//            googleMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
-
             map = googleMap;
-
             enableMyLocation();
+
+            //map.addMarker(delivery_man.position(delivery_locate));
         }
     };
 
-    @Nullable
-    @Override
-    public View onCreateView(@NonNull LayoutInflater inflater,
-                             @Nullable ViewGroup container,
-                             @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.delivery_fragment_maps, container, false);
-    }
-
     private void enableMyLocation() {
-
-        System.out.println("2222222");
         System.out.println(ContextCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION));
         System.out.println(PackageManager.PERMISSION_GRANTED);
         if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION)
@@ -86,18 +65,22 @@ public class MapsFragment extends Fragment implements GoogleMap.OnMyLocationButt
                 System.out.println("333333");
                 map.setMyLocationEnabled(true);
                 map.setOnMyLocationButtonClickListener(this);
-
                 map.setOnMyLocationClickListener(this);
-
-
             }
         } else {
             // Permission to access the location is missing. Show rationale and request permission
             String[] strings = {Manifest.permission.ACCESS_FINE_LOCATION};
-            ActivityCompat.requestPermissions(getActivity(), strings, LOCATION_PERMISSION_REQUEST_CODE);
+            ActivityCompat.requestPermissions(getActivity(), strings, Location_Permission_Request_Code);
         }
     }
 
+    @Nullable
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater,
+                             @Nullable ViewGroup container,
+                             @Nullable Bundle savedInstanceState) {
+        return inflater.inflate(R.layout.user_fragment_maps, container, false);
+    }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
@@ -111,10 +94,6 @@ public class MapsFragment extends Fragment implements GoogleMap.OnMyLocationButt
 
     @Override
     public boolean onMyLocationButtonClick() {
-
-        System.out.println(" onMyLocationButtonClick");
-//        CameraPosition cameraPosition = map.getCameraPosition();
-//        System.out.println(cameraPosition.toString());
         LocationManager locationManager = (LocationManager) getContext().getSystemService(Context.LOCATION_SERVICE);
         LocationProvider lProvider = locationManager.getProvider(LocationManager.NETWORK_PROVIDER);
 
@@ -125,30 +104,11 @@ public class MapsFragment extends Fragment implements GoogleMap.OnMyLocationButt
 
             String loca = "location" + "("  + location.getLatitude() + ", " + location.getLongitude()+")";
             Toast.makeText( getContext(), loca, Toast.LENGTH_SHORT).show();
-
-//            Intent i = new Intent(Intent.ACTION_VIEW,Uri.parse("http://ditu.google.com/maps?f=d&source=s_d&saddr="
-//                    + location.getLatitude()
-//                    + ","
-//                    + location.getLongitude()
-//                    + "&daddr="
-//                    + 39.978768
-//                    + ","
-//                    +  -75.154054 + "&hl=en"));
-//            i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK
-//                    & Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
-//            i.setClassName("com.google.android.apps.maps",
-//                    "com.google.android.maps.MapsActivity");
-//            startActivity(i);
-
         } else {
             // Permission to access the location is missing. Show rationale and request permission
             String[] strings = {Manifest.permission.ACCESS_FINE_LOCATION};
-            ActivityCompat.requestPermissions(getActivity(), strings, LOCATION_PERMISSION_REQUEST_CODE);
+            ActivityCompat.requestPermissions(getActivity(), strings, Location_Permission_Request_Code);
         }
-
-
-
-
         return false;
     }
 
