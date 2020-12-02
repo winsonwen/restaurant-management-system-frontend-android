@@ -66,19 +66,6 @@ public class HomeFragment extends Fragment {
 
         sharedViewModel = ViewModelProviders.of(this).get(SharedViewModel .class);
 
-        CustomerEntity customerEntity = new CustomerEntity("Joe", "Jack", "2671111111","18i01 N Broad St, Philadelphia, PA 19122");
-
-        OrderEntity orderEntity0 = new OrderEntity(1,"Food List", 1,100.00,customerEntity,0);
-        OrderEntity orderEntity1 = new OrderEntity(2,"Food List", 1,100.00,customerEntity,1);
-        OrderEntity orderEntity2 = new OrderEntity(3,"Food List", 1,100.00,customerEntity,2);
-        OrderEntity orderEntity3 = new OrderEntity(4,"Food List", 1,100.00,customerEntity,3);
-        OrderEntity orderEntity4 = new OrderEntity(5,"Food List", 1,100.00,customerEntity,4);
-
-        orderEntities.add(orderEntity0);
-        orderEntities.add(orderEntity1);
-        orderEntities.add(orderEntity2);
-        orderEntities.add(orderEntity3);
-        orderEntities.add(orderEntity4);
 
         requestQueue = Volley.newRequestQueue(getActivity().getApplicationContext());
 
@@ -112,6 +99,7 @@ public class HomeFragment extends Fragment {
             public void onResponse(JSONObject response) {
                 //  processed results
                 getOrderInfoResult(response);
+                System.out.println(response);
 //                submitResponse(response);
             }
         }, new Response.ErrorListener() {
@@ -149,6 +137,7 @@ public class HomeFragment extends Fragment {
     public void getOrderInfoResult(final JSONObject result){
         try {
             orderEntities = new ArrayList<>();
+
             if("0".equals(result.getString("code"))){
                 JSONArray orders = result.getJSONArray("orderEntities");
                 for (int i=0; i<orders.length(); i++){

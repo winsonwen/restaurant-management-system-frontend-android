@@ -137,7 +137,7 @@ public class SharedViewModel extends AndroidViewModel {
 
             }
         }, threadPoolExecutor);
-        System.out.println("111"+ locationFuture);
+
 
     }
 
@@ -163,7 +163,7 @@ public class SharedViewModel extends AndroidViewModel {
 //        }
     }
 
-    // http request for delivery info update
+    // http request for delivery man info update
     public void updateInfo(String firstName, String lastName, String phoneNumber, String email) {
         HashMap<String, String> map = new HashMap<String, String>();
         map.put("employeeId", "");
@@ -254,5 +254,97 @@ public class SharedViewModel extends AndroidViewModel {
 
     public MutableLiveData<JSONObject> getResponse() {
         return this.response;
+    }
+
+
+    // updating order state after delivery man pick up the order
+    public void takeOrder(int orderId) {
+        HashMap<String, String> map = new HashMap<String, String>();
+        map.put("orderId", String.valueOf(orderId));
+
+        JSONObject object = new JSONObject(map);
+
+        JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, Properties.URL + "takeOrder", object, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                System.out.println(error);
+                Log.e("takeOrder---error", error.toString());
+            }
+        }) {
+            @Override
+            public Map<String, String> getHeaders() {
+                Map<String, String> map = new HashMap<String, String>();
+
+                // get session from storage
+                SharedPreferences sharedPreferences2 = getApplication().getSharedPreferences(Properties.STORAGE, Context.MODE_PRIVATE);
+                Long time = sharedPreferences2.getLong(Properties.USER_LOGIN_TIME, 0);
+
+                String session = sharedPreferences2.getString(Properties.USER_SESS, "");
+
+//                set session for http request
+                if (session != null && time != 0) {
+                    if ((System.currentTimeMillis() - time) < 86400000) {
+                        map.put("cookie", session);
+                        map.put("type", "staff");
+                    }
+                }
+                return map;
+
+            }
+        };
+
+        requestqueue.add(request);
+
+
+
+
+    }
+
+    public void orderFinished(int orderId) {
+
+        HashMap<String, String> map = new HashMap<String, String>();
+        map.put("orderId", String.valueOf(orderId));
+
+        JSONObject object = new JSONObject(map);
+
+        JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, Properties.URL + "orderFinished", object, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                System.out.println(error);
+                Log.e("orderFinished---error", error.toString());
+            }
+        }) {
+            @Override
+            public Map<String, String> getHeaders() {
+                Map<String, String> map = new HashMap<String, String>();
+
+                // get session from storage
+                SharedPreferences sharedPreferences2 = getApplication().getSharedPreferences(Properties.STORAGE, Context.MODE_PRIVATE);
+                Long time = sharedPreferences2.getLong(Properties.USER_LOGIN_TIME, 0);
+
+                String session = sharedPreferences2.getString(Properties.USER_SESS, "");
+//                set session for http request
+                if (session != null && time != 0) {
+                    if ((System.currentTimeMillis() - time) < 86400000) {
+                        map.put("cookie", session);
+                        map.put("type", "staff");
+                    }
+                }
+                return map;
+
+            }
+        };
+
+        requestqueue.add(request);
     }
 }

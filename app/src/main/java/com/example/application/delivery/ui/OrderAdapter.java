@@ -59,10 +59,10 @@ public class OrderAdapter extends BaseAdapter {
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(final int position, View convertView, ViewGroup parent) {
         //the component in delivery_fragment_order_item
-        TextView orderIdTextView, oderStatusTextView, customerName, customerAddress, customerPhone, orderList;
-        Button deliveryButton, customerInfoButton;
+        final TextView orderIdTextView, oderStatusTextView, customerName, customerAddress, customerPhone, orderList;
+        final Button deliveryButton, customerInfoButton;
 
         if (!(convertView instanceof LinearLayout)) {
             convertView = LayoutInflater.from(context).inflate(R.layout.delivery_fragment_order_item, parent, false);
@@ -77,7 +77,10 @@ public class OrderAdapter extends BaseAdapter {
         orderList = convertView.findViewById(R.id.delivery_order_item);
 
 
-
+        customerName.setText( ((OrderEntity) getItem(position)).getCustomerEntity().getFirstName() + " " + ((OrderEntity) getItem(position)).getCustomerEntity().getLastName() );
+        customerAddress.setText( ((OrderEntity) getItem(position)).getCustomerEntity().getStressName());
+        customerPhone.setText( ((OrderEntity) getItem(position)).getCustomerEntity().getPhone());
+        orderList.setText( "$" + ((OrderEntity) getItem(position)).getOrderTotal().toString() + "\n" +  ((OrderEntity) getItem(position)).getFoodItems()   );
         orderIdTextView.setText(String.valueOf(((OrderEntity) getItem(position)).getOrderId()));
 
         int orderStatus = ((OrderEntity) getItem(position)).getOrderStatus();
@@ -100,16 +103,20 @@ public class OrderAdapter extends BaseAdapter {
                     LocationManager locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
                     LocationProvider lProvider = locationManager.getProvider(LocationManager.NETWORK_PROVIDER);
 
+                    //Permission verification
                     if (ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION)
                             == PackageManager.PERMISSION_GRANTED) {
 
                         sharedViewModel.updateDeliveryManLocation();
+                        sharedViewModel.takeOrder(((OrderEntity) getItem(position)).getOrderId());
 
                         locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
                         Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
 
                         String loca = "location" + "(" + location.getLatitude() + ", " + location.getLongitude() + ")";
                         Toast.makeText(context, loca, Toast.LENGTH_SHORT).show();
+
+
 
                         Intent i = new Intent(Intent.ACTION_VIEW, Uri.parse("http://ditu.google.com/maps?f=d&source=s_d&saddr="
                                 + location.getLatitude()
@@ -122,8 +129,26 @@ public class OrderAdapter extends BaseAdapter {
                         i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK & Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
                         i.setClassName("com.google.android.apps.maps", "com.google.android.maps.MapsActivity");
 
-//                     TODO   context.startActivity(i);
+                        // changing the display status
+                        deliveryButton.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                sharedViewModel.stopLocationFuture();
+                                sharedViewModel.orderFinished(((OrderEntity) getItem(position)).getOrderId());
+                                oderStatusTextView.setText("Delivered");
+                                deliveryButton.setVisibility(View.GONE);
+                                customerName.setVisibility(View.GONE);
+                                customerAddress.setVisibility(View.GONE);
+                                customerPhone.setVisibility(View.GONE);
+                                orderList.setVisibility(View.GONE);
+                            }
+                        });
+                        oderStatusTextView.setText("Delivering");
+                        deliveryButton.setText("Finished");
 
+//                     TODO
+                        //traster to google maps
+                        context.startActivity(i);
                     } else {
                         // Permission to access the location is missing. Show rationale and request permission
                         String[] strings = {Manifest.permission.ACCESS_FINE_LOCATION};
@@ -134,11 +159,7 @@ public class OrderAdapter extends BaseAdapter {
             });
 
 
-            customerName.setText( ((OrderEntity) getItem(position)).getCustomerEntity().getFirstName() + " " + ((OrderEntity) getItem(position)).getCustomerEntity().getLastName() );
 
-            customerAddress.setText( ((OrderEntity) getItem(position)).getCustomerEntity().getStressName());
-            customerPhone.setText( ((OrderEntity) getItem(position)).getCustomerEntity().getPhone());
-            orderList.setText( "$" + ((OrderEntity) getItem(position)).getOrderTotal().toString() + "\n" +  ((OrderEntity) getItem(position)).getFoodItems()   );
 
 
         }else if(orderStatus==2){
@@ -159,8 +180,24 @@ public class OrderAdapter extends BaseAdapter {
             customerPhone.setVisibility(View.GONE);
             orderList.setVisibility(View.GONE);
         }else if (orderStatus==5){
-            oderStatusTextView.setText("Please Wait for Delivering");
-            deliveryButton.setText("Delivering");
+            oderStatusTextView.setText("Delivering");
+            deliveryButton.setText("Finished");
+            sharedViewModel.updateDeliveryManLocation();
+
+            deliveryButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    sharedViewModel.stopLocationFuture();
+                    sharedViewModel.orderFinished(((OrderEntity) getItem(position)).getOrderId());
+                    oderStatusTextView.setText("Delivered");
+                    deliveryButton.setVisibility(View.GONE);
+                    customerName.setVisibility(View.GONE);
+                    customerAddress.setVisibility(View.GONE);
+                    customerPhone.setVisibility(View.GONE);
+                    orderList.setVisibility(View.GONE);
+
+                }
+            });
 
         }
 
