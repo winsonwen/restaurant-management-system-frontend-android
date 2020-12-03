@@ -99,8 +99,7 @@ public class HomeFragment extends Fragment {
             public void onResponse(JSONObject response) {
                 //  processed results
                 getOrderInfoResult(response);
-                System.out.println(response);
-//                submitResponse(response);
+
             }
         }, new Response.ErrorListener() {
             @Override
@@ -145,14 +144,12 @@ public class HomeFragment extends Fragment {
                     JSONObject customerEntity1 = jsonObject.getJSONObject("customerEntity");
                     CustomerEntity customerEntity = new CustomerEntity(customerEntity1.getString("firstName"),customerEntity1.getString("lastName"),customerEntity1.getString("phone"),customerEntity1.getString("stressName"));
                     OrderEntity orderEntity = new OrderEntity(jsonObject.getInt("orderId"),jsonObject.getString("foodItems"),jsonObject.getInt("quantity"),jsonObject.getDouble("orderTotal"), customerEntity,jsonObject.getInt("orderStatus"));
-
-                    System.out.println(orderEntity.toString());
                     orderEntities.add(orderEntity);
 
                 }
 
                 listView = (ListView)root.findViewById(R.id.oder_list_view);
-                listView.setAdapter(new OrderAdapter(getContext(), getActivity(), orderEntities, sharedViewModel));
+                listView.setAdapter(new OrderAdapter(getContext(), getActivity(), orderEntities, sharedViewModel, requestQueue));
 
                 listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                     @Override
