@@ -149,7 +149,7 @@ public class SharedViewModel extends AndroidViewModel {
 //                Toast.makeText(getApplication(), "update location error, ple contact Admin", Toast.LENGTH_SHORT).show();
 
             }
-            System.out.println(result);
+//            System.out.println(result);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -157,10 +157,19 @@ public class SharedViewModel extends AndroidViewModel {
 
 
     public void stopLocationFuture(){
-//        System.out.println(locationFuture);
-//        if(locationFuture!=null) {
-            locationFuture.cancel(false);
-//        }
+
+        //在两个
+        boolean cancel = locationFuture.cancel(true);
+        if(cancel)
+        locationFuture.cancel(true);//如果执行已经完成，则可能没有被取消
+        if(locationFuture.isCancelled()){
+            System.out.println("cancelled");
+
+        } else if(locationFuture.isCompletedExceptionally()){
+            System.out.println("exception");
+        } else {
+            System.out.println("success");
+        }
     }
 
     // http request for delivery man info update
