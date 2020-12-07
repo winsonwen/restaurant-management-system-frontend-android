@@ -57,7 +57,9 @@ public class HomeFragment extends Fragment {
         orderEntities.add(orderEntity3);
         orderEntities.add(orderEntity4);
 
+
         View root = inflater.inflate(R.layout.delivery_fragment_order, container, false);
+
 
         listView = (ListView)root.findViewById(R.id.oder_list_view);
         listView.setAdapter(new OrderAdapter(getContext(), getActivity(), container, orderEntities));
