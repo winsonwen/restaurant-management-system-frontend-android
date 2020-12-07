@@ -32,6 +32,8 @@ import com.example.application.Properties;
 import com.example.application.R;
 import com.example.application.delivery.ui.logout.LogOutFragment;
 import com.example.application.user.ui.OrderAdapter;
+import com.example.application.user.ui.googlemaps.GoogleMapsViewModel;
+import com.example.application.user.ui.googlemaps.MapsFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
@@ -43,12 +45,13 @@ import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.Map;
 
-public class UserActivity extends AppCompatActivity implements LogOutFragment.LogOutListener{
+public class UserActivity extends AppCompatActivity implements LogOutFragment.LogOutListener {
     private AppBarConfiguration mAppBarConfiguration;
     RequestQueue requestqueue;
     TextView textView5;
     TextView textView;
     private userSharedViewModel sharedViewModel;
+    private GoogleMapsViewModel MapsharedViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,6 +63,7 @@ public class UserActivity extends AppCompatActivity implements LogOutFragment.Lo
 
 
         sharedViewModel = ViewModelProviders.of(this).get(userSharedViewModel.class);
+
         FloatingActionButton fab = findViewById(R.id.fab_user);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -107,7 +111,6 @@ public class UserActivity extends AppCompatActivity implements LogOutFragment.Lo
         return NavigationUI.navigateUp(navController, mAppBarConfiguration)
                 || super.onSupportNavigateUp();
     }
-
 
     @Override
     public void LogOutInteraction() {

@@ -1,13 +1,7 @@
 package com.example.application.user.ui.orderList;
 
-import android.Manifest;
 import android.content.Context;
-import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.location.Location;
-import android.location.LocationManager;
-import android.location.LocationProvider;
-import android.net.Uri;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,21 +10,32 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
-import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
+import androidx.lifecycle.ViewModelProviders;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
+import com.example.application.Properties;
 import com.example.application.R;
 import com.example.application.user.ui.OrderAdapter;
 import com.example.application.user.ui.entity.OrderEntity;
 import com.example.application.user.ui.entity.UserEntity;
+import com.example.application.user.userSharedViewModel;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class HomeFragment extends Fragment {
 
@@ -39,63 +44,83 @@ public class HomeFragment extends Fragment {
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
     private ListView listView;
     ArrayList<OrderEntity> orderEntities = new ArrayList<>();
+    userSharedViewModel sharedViewModel;
+    RequestQueue requestQueue;
+    LayoutInflater inflater;
+    View root;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              final ViewGroup container, Bundle savedInstanceState) {
 
-        UserEntity userEntity = new UserEntity("Jack", "Lin", "2671111111","1801 N Broad St, Philadelphia, PA 19122");
-
-        OrderEntity orderEntity0 = new OrderEntity(1,"Food List", 1,100.00,userEntity,0);
-        OrderEntity orderEntity1 = new OrderEntity(2,"Food List", 1,100.00,userEntity,1);
-        OrderEntity orderEntity2 = new OrderEntity(3,"Food List", 1,100.00,userEntity,2);
-        OrderEntity orderEntity3 = new OrderEntity(4,"Food List", 1,100.00,userEntity,3);
-        OrderEntity orderEntity4 = new OrderEntity(5,"Food List", 1,100.00,userEntity,4);
-
-        orderEntities.add(orderEntity0);
-        orderEntities.add(orderEntity1);
-        orderEntities.add(orderEntity2);
-        orderEntities.add(orderEntity3);
-        orderEntities.add(orderEntity4);
-
-        View root = inflater.inflate(R.layout.user_fragment_order, container, false);
-
-        listView = (ListView)root.findViewById(R.id.oder_list_view);
-        listView.setAdapter(new OrderAdapter(getContext(), getActivity(), container, orderEntities));
-
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        sharedViewModel = ViewModelProviders.of(this).get(userSharedViewModel.class);
+        requestQueue = Volley.newRequestQueue(getActivity().getApplicationContext());
+        JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, Properties.URL + "getUserOrderInfo", null, new Response.Listener<JSONObject>() {
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            public void onResponse(JSONObject response) {
+                try{
+                    orderEntities = new ArrayList<>();
+                    if("0".equals(response.getString("code"))){
+                        JSONArray orders = response.getJSONArray("orderEntities");
+                        for (int i=0; i<orders.length(); i++){
+                            JSONObject object = orders.getJSONObject(i);
+                            OrderEntity orderEntity = new OrderEntity(object.getInt("orderId"),object.getString("foodItems"),object.getInt("quantity"),object.getDouble("orderTotal"),null,object.getInt("orderStatus"));
+                            orderEntities.add(orderEntity);
+                        }
 
-                TextView  customerName, customerAddress, customerPhone, orderList;
+                        listView = (ListView)root.findViewById(R.id.oder_list_view);
+                        listView.setAdapter(new OrderAdapter(getContext(), getActivity(), container, orderEntities, sharedViewModel, requestQueue));
+                        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                            @Override
+                            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-                customerName = view.findViewById(R.id.delivery_customer_name);
-                customerAddress = view.findViewById(R.id.delivery_customer_address);
-                customerPhone = view.findViewById(R.id.delivery_customer_phone);
-                orderList = view.findViewById(R.id.delivery_order_item);
+                                TextView customerName, customerAddress, customerPhone, orderList;
 
-                int visibility = customerName.getVisibility();
-                if(visibility==View.GONE) {
-                    OrderEntity item = (OrderEntity) listView.getAdapter().getItem(position);
-                    customerName.setText(item.getUserEntity().getFirstName() + " " + item.getUserEntity().getLastName());
-                    customerName.setVisibility(View.VISIBLE);
-                    customerAddress.setVisibility(View.VISIBLE);
-                    customerPhone.setVisibility(View.VISIBLE);
-                    orderList.setVisibility(View.VISIBLE);
+                                customerName = view.findViewById(R.id.delivery_customer_name);
+                                orderList = view.findViewById(R.id.delivery_order_item);
 
-                    customerAddress.setText(item.getUserEntity().getStressName());
-                    customerPhone.setText(item.getUserEntity().getPhone());
-                    orderList.setText("$" + item.getOrderTotal().toString() + "\n" + item.getFoodItems());
-                }else if(visibility==View.VISIBLE){
-                    customerName.setVisibility(View.GONE);
-                    customerAddress.setVisibility(View.GONE);
-                    customerPhone.setVisibility(View.GONE);
-                    orderList.setVisibility(View.GONE);
+                                int visibility = customerName.getVisibility();
+                                if(visibility==View.GONE) {
+                                    OrderEntity item = (OrderEntity) listView.getAdapter().getItem(position);
+                                    orderList.setText("$" + item.getOrderTotal().toString() + "\n" + item.getFoodItems());
+                                }else if(visibility==View.VISIBLE){
+                                    orderList.setVisibility(View.GONE);
+                                }
+
+                            }
+                        });
+                    }
+                }catch (JSONException e){
+                    e.printStackTrace();
                 }
             }
-        });
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                System.out.println(error);
+            }
+        }){
+            public Map<String, String> getHeaders(){
+                Map<String, String> map = new HashMap<String, String>();
+                SharedPreferences sharedPreferences = getContext().getSharedPreferences(Properties.STORAGE, Context.MODE_PRIVATE);
+                Long time = sharedPreferences.getLong(Properties.USER_LOGIN_TIME, 0);
+
+                String session = sharedPreferences.getString(Properties.USER_SESS, "");
+                if(session != null && time != 0){
+                    if((System.currentTimeMillis() - time) < 86400000){
+                        map.put("cookie", session);
+                        map.put("type", "user");
+                    }
+                }
+                return map;
+            }
+        };
+        requestQueue.add(request);
+
+        this.inflater = inflater;
+
+        this.root = inflater.inflate(R.layout.user_fragment_order, container, false);
 
         return root;
     }
-
 
 }

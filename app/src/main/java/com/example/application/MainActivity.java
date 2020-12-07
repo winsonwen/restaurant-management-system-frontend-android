@@ -21,6 +21,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.application.delivery.DeliveryManActivity;
+import com.example.application.user.UserActivity;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -168,7 +169,7 @@ public class MainActivity extends AppCompatActivity{
                             editor.putString(Properties.USER_INFO, memberInfo.toString());
                             editor.commit();
 
-                            Intent intent = new Intent(MainActivity.this, User.class);
+                            Intent intent = new Intent(MainActivity.this, UserActivity.class);
                             startActivity(intent);
 
                         }
