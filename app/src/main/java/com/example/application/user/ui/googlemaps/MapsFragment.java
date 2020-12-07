@@ -30,6 +30,7 @@ import com.android.volley.toolbox.Volley;
 import com.example.application.Properties;
 import com.example.application.R;
 import com.example.application.user.userSharedViewModel;
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -192,7 +193,7 @@ public class MapsFragment extends Fragment implements GoogleMap.OnMyLocationButt
 
     }
 
-    public void drawRoute(LatLng deliveryLocation, LatLng location){
+    public void drawRoute(final LatLng deliveryLocation, LatLng location){
 
         //map.addMarker(new MarkerOptions().position(location).title("user location"));
         place1 = new MarkerOptions().position(deliveryLocation).title("delivery");
@@ -202,6 +203,10 @@ public class MapsFragment extends Fragment implements GoogleMap.OnMyLocationButt
             public void onMapReady(GoogleMap googleMap) {
                 googleMap.addMarker(place1);
                 googleMap.addMarker(place2);
+
+                googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(deliveryLocation, 5));
+
+
             }
         };
         System.out.println("show map");
