@@ -98,22 +98,6 @@ public class MainActivity extends AppCompatActivity{
 
 
             @Override
-            public Map<String, String> getHeaders()  {
-
-                Map<String, String> map = new HashMap<String, String>();
-
-//                SharedPreferences sharedPreferences2  = getSharedPreferences(Properties.USER_SESS, Context.MODE_PRIVATE);
-//                String name = sharedPreferences2.getString(Properties.USER_SESS, null);
-//                Long time = sharedPreferences2.getLong(Properties.USER_LOGIN_TIME,0);
-//                if(name!=null && time==0 ) {
-//                    if((System.currentTimeMillis()-time)<86400000)
-//                        map.put("cookie", name);
-//                }
-                return map;
-
-            }
-
-            @Override
             protected Response<JSONObject> parseNetworkResponse(NetworkResponse response) {
                 Map<String, String> headers = response.headers;
                 String cookie = (String)headers.get("Set-Cookie");

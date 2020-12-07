@@ -71,7 +71,9 @@ public class OrderAdapter extends BaseAdapter {
         Button deliveryButton, customerInfoButton;
 
         if (!(convertView instanceof LinearLayout)) {
-            convertView = LayoutInflater.from(context).inflate(R.layout.user_fragment_order_item, parent, false);
+
+            convertView = LayoutInflater.from(context).inflate(R.layout.delivery_fragment_order_item, parent, false);
+
         }
 
         orderIdTextView = convertView.findViewById(R.id.order_id);

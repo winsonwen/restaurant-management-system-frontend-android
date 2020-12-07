@@ -3,86 +3,85 @@ package com.example.application.delivery.ui.orderList;
 import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
 import android.location.LocationProvider;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
-
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
-import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProviders;
-import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
 
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProviders;
+
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
+import com.example.application.Properties;
 import com.example.application.R;
+import com.example.application.delivery.SharedViewModel;
+import com.example.application.delivery.ui.OrderAdapter;
+import com.example.application.delivery.ui.entity.CustomerEntity;
+import com.example.application.delivery.ui.entity.OrderEntity;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class HomeFragment extends Fragment {
 
-    private HomeViewModel homeViewModel;
+    //    private HomeViewModel homeViewModel;
     private Button button;
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
+    private ListView listView;
+    ArrayList<OrderEntity> orderEntities = new ArrayList<>();
+    SharedViewModel sharedViewModel;
+    RequestQueue requestQueue;
+    LayoutInflater inflater;
+    View root;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
-                             ViewGroup container, Bundle savedInstanceState) {
-        // TODO Google maps
+                             final ViewGroup container, Bundle savedInstanceState) {
+        // Google maps
         //nav transfer
-//        NavController controller= Navigation.findNavController(container);
-//        controller.navigate(R.id.nav_googlemaps);
-        System.out.println("??????????!!!");
-        View root = inflater.inflate(R.layout.delivery_fragment_home, container, false);
+        // NavController controller= Navigation.findNavController(container);
+        //  controller.navigate(R.id.nav_googlemaps);
 
-        button = (Button) root.findViewById(R.id.button2);
+        sharedViewModel = ViewModelProviders.of(this).get(SharedViewModel .class);
 
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                LocationManager locationManager = (LocationManager) getContext().getSystemService(Context.LOCATION_SERVICE);
-                LocationProvider lProvider = locationManager.getProvider(LocationManager.NETWORK_PROVIDER);
 
-                if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION)
-                        == PackageManager.PERMISSION_GRANTED) {
-                    locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-                    Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+        requestQueue = Volley.newRequestQueue(getActivity().getApplicationContext());
 
-                    String loca = "location" + "(" + location.getLatitude() + ", " + location.getLongitude() + ")";
-                    Toast.makeText(getContext(), loca, Toast.LENGTH_SHORT).show();
+        getOrderInfo();
+        this.inflater = inflater;
 
-                    Intent i = new Intent(Intent.ACTION_VIEW, Uri.parse("http://ditu.google.com/maps?f=d&source=s_d&saddr="
-                            + location.getLatitude()
-                            + ","
-                            + location.getLongitude()
-                            + "&daddr="
-                            + 39.978768
-                            + ","
-                            + -75.154054 + "&hl=en"));
-                    i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK & Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
-                    i.setClassName("com.google.android.apps.maps", "com.google.android.maps.MapsActivity");
-                    startActivity(i);
+        this.root = inflater.inflate(R.layout.delivery_fragment_order, container, false);
 
-                } else {
-                    // Permission to access the location is missing. Show rationale and request permission
-                    String[] strings = {Manifest.permission.ACCESS_FINE_LOCATION};
-                    ActivityCompat.requestPermissions(getActivity(), strings, LOCATION_PERMISSION_REQUEST_CODE);
-                }
-            }
-        });
+//        button = (Button) root.findViewById(R.id.button2);
+
+
 
 
 //        homeViewModel =
 //                ViewModelProviders.of(this).get(HomeViewModel.class);
-//        View root = inflater.inflate(R.layout.delivery_fragment_home, container, false);
+//        View root = inflater.inflate(R.layout.delivery_fragment_order, container, false);
 //        final TextView textView = root.findViewById(R.id.text_home);
 //        homeViewModel.getText().observe(getViewLifecycleOwner(), new Observer<String>() {
 //            @Override
@@ -93,5 +92,102 @@ public class HomeFragment extends Fragment {
         return root;
     }
 
+    private void getOrderInfo() {
+
+        JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, Properties.URL + "getOrderInfo", null, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                //  processed results
+                getOrderInfoResult(response);
+
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                System.out.println(error);
+                Log.e("updateInfo---error", error.toString());
+            }
+        }) {
+            @Override
+            public Map<String, String> getHeaders() {
+                Map<String, String> map = new HashMap<String, String>();
+
+                // get session from storage
+                SharedPreferences sharedPreferences2 = getContext().getSharedPreferences(Properties.STORAGE, Context.MODE_PRIVATE);
+                Long time = sharedPreferences2.getLong(Properties.USER_LOGIN_TIME, 0);
+
+                String session = sharedPreferences2.getString(Properties.USER_SESS, "");
+
+//                set session for http request
+                if (session != null && time != 0) {
+                    if ((System.currentTimeMillis() - time) < 86400000) {
+                        map.put("cookie", session);
+                        map.put("type","staff");
+                    }
+                }
+                return map;
+
+            }
+        };
+
+        requestQueue.add(request);
+    }
+
+    public void getOrderInfoResult(final JSONObject result){
+        try {
+            orderEntities = new ArrayList<>();
+
+            if("0".equals(result.getString("code"))){
+                JSONArray orders = result.getJSONArray("orderEntities");
+                for (int i=0; i<orders.length(); i++){
+                    JSONObject jsonObject = orders.getJSONObject(i);
+                    JSONObject customerEntity1 = jsonObject.getJSONObject("customerEntity");
+                    CustomerEntity customerEntity = new CustomerEntity(customerEntity1.getString("firstName"),customerEntity1.getString("lastName"),customerEntity1.getString("phone"),customerEntity1.getString("stressName"));
+                    OrderEntity orderEntity = new OrderEntity(jsonObject.getInt("orderId"),jsonObject.getString("foodItems"),jsonObject.getInt("quantity"),jsonObject.getDouble("orderTotal"), customerEntity,jsonObject.getInt("orderStatus"));
+                    orderEntities.add(orderEntity);
+
+                }
+
+                listView = (ListView)root.findViewById(R.id.oder_list_view);
+                listView.setAdapter(new OrderAdapter(getContext(), getActivity(), orderEntities, sharedViewModel, requestQueue));
+
+                listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+                        TextView  customerName, customerAddress, customerPhone, orderList;
+
+                        customerName = view.findViewById(R.id.delivery_customer_name);
+                        customerAddress = view.findViewById(R.id.delivery_customer_address);
+                        customerPhone = view.findViewById(R.id.delivery_customer_phone);
+                        orderList = view.findViewById(R.id.delivery_order_item);
+
+                        int visibility = customerName.getVisibility();
+                        if(visibility==View.GONE) {
+                            OrderEntity item = (OrderEntity) listView.getAdapter().getItem(position);
+                            customerName.setText(item.getCustomerEntity().getFirstName() + " " + item.getCustomerEntity().getLastName());
+                            customerName.setVisibility(View.VISIBLE);
+                            customerAddress.setVisibility(View.VISIBLE);
+                            customerPhone.setVisibility(View.VISIBLE);
+                            orderList.setVisibility(View.VISIBLE);
+
+                            customerAddress.setText(item.getCustomerEntity().getStressName());
+                            customerPhone.setText(item.getCustomerEntity().getPhone());
+                            orderList.setText("$" + item.getOrderTotal().toString() + "\n" + item.getFoodItems());
+                        }else if(visibility==View.VISIBLE){
+                            customerName.setVisibility(View.GONE);
+                            customerAddress.setVisibility(View.GONE);
+                            customerPhone.setVisibility(View.GONE);
+                            orderList.setVisibility(View.GONE);
+                        }
+
+                    }
+                });
+
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
 
 }

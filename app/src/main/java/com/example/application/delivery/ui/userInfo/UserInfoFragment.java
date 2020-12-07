@@ -74,7 +74,7 @@ public class UserInfoFragment extends Fragment {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                sharedViewModel.UpdateInfo(textView.getText().toString(), textView2.getText().toString(), textView4.getText().toString(), textView3.getText().toString());
+                sharedViewModel.updateInfo(textView.getText().toString(), textView2.getText().toString(), textView4.getText().toString(), textView3.getText().toString());
             }
         });
 
@@ -91,9 +91,8 @@ public class UserInfoFragment extends Fragment {
                     }else  {
                         verify=true;
                     }
-                    TextView textView;
-
-                    textView = (TextView) getActivity().findViewById(R.id.textView10);
+                    TextView textView = (TextView) getActivity().findViewById(R.id.textView10);
+                    textView.setText("");
                     textView = (TextView) getActivity().findViewById(R.id.textView6);
                     textView.setText("");
                     textView = (TextView) getActivity().findViewById(R.id.textView12);
@@ -157,16 +156,11 @@ public class UserInfoFragment extends Fragment {
                             textView.setText(data);
                         }
                     }
-
-
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-
-
             }
         });
-
         return root;
     }
 }
