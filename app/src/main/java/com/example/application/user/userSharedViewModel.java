@@ -1,11 +1,16 @@
 package com.example.application.user;
 
+import android.annotation.SuppressLint;
 import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.location.Location;
+import android.location.LocationManager;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.android.volley.Request;
@@ -15,16 +20,24 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.application.Properties;
+import com.example.application.delivery.SharedViewModel;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.net.HttpCookie;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executors;
+import java.util.concurrent.LinkedBlockingDeque;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 public class userSharedViewModel extends AndroidViewModel {
 
-    private RequestQueue requestqueue;
+    private RequestQueue requestqueue,locationrequestqueue;
 
     private MutableLiveData<JSONObject> result = new MutableLiveData<>();
     private MutableLiveData<JSONObject> response = new MutableLiveData<>();
@@ -43,6 +56,7 @@ public class userSharedViewModel extends AndroidViewModel {
             e.printStackTrace();
         }
     }
+
 
     // http request for delivery info update
     public void UpdateInfo(String firstName, String lastName, String phoneNumber, String email){
@@ -88,7 +102,6 @@ public class userSharedViewModel extends AndroidViewModel {
         requestqueue.add(request);
     }
 
-
     public JSONObject getRes() {
         return this.result.getValue();
     }
@@ -96,9 +109,6 @@ public class userSharedViewModel extends AndroidViewModel {
     public void setRes(JSONObject res) {
         this.result.setValue(res);
     }
-
-
-
 
     public void setRequestqueue(RequestQueue requestqueue) {
         this.requestqueue = requestqueue;
@@ -123,13 +133,12 @@ public class userSharedViewModel extends AndroidViewModel {
         this.response.setValue(res);
     }
 
-
     public MutableLiveData<JSONObject> getResult() {
         return this.result;
     }
 
-
     public MutableLiveData<JSONObject> getResponse() {
         return this.response;
     }
+
 }
