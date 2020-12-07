@@ -4,6 +4,7 @@ import android.Manifest;
 import android.app.Activity;
 import android.app.FragmentTransaction;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
@@ -27,9 +28,16 @@ import androidx.fragment.app.FragmentManager;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
+import com.android.volley.RequestQueue;
+import com.example.application.Properties;
 import com.example.application.R;
+import com.example.application.delivery.SharedViewModel;
 import com.example.application.user.ui.entity.OrderEntity;
 import com.example.application.user.ui.googlemaps.MapsFragment;
+import com.example.application.user.userSharedViewModel;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 
@@ -41,12 +49,16 @@ public class OrderAdapter extends BaseAdapter {
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
     Activity activity;
     ViewGroup container;
+    userSharedViewModel sharedViewModel;
+    RequestQueue requestQueue;
 
-    public OrderAdapter (Context context, Activity activity, ViewGroup container, ArrayList orderEntities) {
+    public OrderAdapter (Context context, Activity activity, ViewGroup container, ArrayList orderEntities, userSharedViewModel sharedViewModel, RequestQueue requestQueue) {
         this.context = context;
         this.orderEntities = orderEntities;
         this.container = container;
         this.activity = activity;
+        this.sharedViewModel = sharedViewModel;
+        this.requestQueue = requestQueue;
     }
 
 
@@ -66,14 +78,12 @@ public class OrderAdapter extends BaseAdapter {
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
-        TextView orderIdTextView, oderStatusTextView, customerName, customerAddress, customerPhone, orderList;
-        Button deliveryButton, customerInfoButton;
+    public View getView(final int position, View convertView, ViewGroup parent) {
+        final TextView orderIdTextView, oderStatusTextView, customerName, customerAddress, customerPhone, orderList;
+        final Button deliveryButton, customerInfoButton;
 
         if (!(convertView instanceof LinearLayout)) {
-
-            convertView = LayoutInflater.from(context).inflate(R.layout.delivery_fragment_order_item, parent, false);
-
+            convertView = LayoutInflater.from(context).inflate(R.layout.user_fragment_order_item, parent, false);
         }
 
         orderIdTextView = convertView.findViewById(R.id.order_id);
@@ -102,15 +112,22 @@ public class OrderAdapter extends BaseAdapter {
             deliveryButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    SharedPreferences sharedPreferences = context.getSharedPreferences(Properties.STORAGE, Context.MODE_PRIVATE);
+                    SharedPreferences.Editor editor = sharedPreferences.edit();
+                    editor.remove(Properties.Order_ID);
+                    editor.putString(Properties.Order_ID, orderIdTextView.getText().toString());
+                    editor.commit();
+                    oderStatusTextView.setText("Delivered");
+                    deliveryButton.setVisibility(View.GONE);
+                    customerName.setVisibility(View.GONE);
+                    customerAddress.setVisibility(View.GONE);
+                    customerPhone.setVisibility(View.GONE);
+                    orderList.setVisibility(View.GONE);
                     startChecking();
                 }
             });
 
 
-            customerName.setText( ((OrderEntity) getItem(position)).getUserEntity().getFirstName() + " " + ((OrderEntity) getItem(position)).getUserEntity().getLastName() );
-
-            customerAddress.setText( ((OrderEntity) getItem(position)).getUserEntity().getStressName());
-            customerPhone.setText( ((OrderEntity) getItem(position)).getUserEntity().getPhone());
             orderList.setText( "$" + ((OrderEntity) getItem(position)).getOrderTotal().toString() + "\n" +  ((OrderEntity) getItem(position)).getFoodItems()   );
 
         }else if(orderStatus==2){
@@ -134,27 +151,7 @@ public class OrderAdapter extends BaseAdapter {
 
     private void startChecking() {
         NavController controller = Navigation.findNavController(container);
-        controller.navigate(R.id.nav_googlemaps);
-
-        LocationManager locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
-        LocationProvider lProvider = locationManager.getProvider(LocationManager.NETWORK_PROVIDER);
-
-        if (ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION)
-                == PackageManager.PERMISSION_GRANTED) {
-            locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-            Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-
-
-
-            String loca = "location" + "(" + location.getLatitude() + ", " + location.getLongitude() + ")";
-            Toast.makeText(context, loca, Toast.LENGTH_SHORT).show();
-
-        } else {
-            // Permission to access the location is missing. Show rationale and request permission
-            String[] strings = {Manifest.permission.ACCESS_FINE_LOCATION};
-            ActivityCompat.requestPermissions(activity, strings, LOCATION_PERMISSION_REQUEST_CODE);
-        }
-
+        controller.navigate(R.id.nav_googlemaps_user);
     }
-
 }
+

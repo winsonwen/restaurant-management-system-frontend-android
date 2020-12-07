@@ -9,6 +9,8 @@ public class Properties {
     public static final String USER_LOGIN_TIME= "loginUserTime";
     public static final String EMPLOYEE_INFO= "employeeInfo";
     public static final String USER_INFO= "memberInfo";
+    public static final String Order_ID= "order_id";
+
 
 
 }
